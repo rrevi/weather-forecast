@@ -16,6 +16,11 @@ openweathermap:
     api_key: YOU_OPENWEATHERMAP_API_KEY_GOES_HERE
 ```
 
+#### Install third party software
+From the root of the repository:
+- Install necessary Ruby gems: `bundle install`
+- Install necessary node packages: `yarn install`
+
 ### How to run the test suite
 There is no use of models in this app. Therefore, there are no unit tests.
 
