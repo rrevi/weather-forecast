@@ -1,0 +1,15 @@
+<%= form_with url: "/", scope: :location do |form| %>
+<div class='grid grid-cols-1 gap-4'>
+  <div>
+    <%= form.text_field :zipcode, value: @zipcode, placeholder: "Enter your zipcode (e.g. 95014)", pattern: "[0-9]{5}", required: :true, class: "w-4/5" %>
+    <%= form.submit "Go" %>
+  </div>
+  <% if @errors.any? %>
+  <div>
+    <% @errors.each do |error| %>
+      <p class="text-red-600"><%= error %></p>
+    <% end %>
+  </div>
+  <% end %>
+</div>
+<% end %>
