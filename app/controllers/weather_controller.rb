@@ -1,5 +1,5 @@
-require 'net/http'
-require 'json'
+require "net/http"
+require "json"
 
 class WeatherController < ApplicationController
   def index
@@ -7,7 +7,7 @@ class WeatherController < ApplicationController
     if request.post?
       # get zipcode from params
       @zipcode = location_params[:zipcode]
-      
+
       # basic validate zipcode (depiste the front-end already validating)
       if @zipcode.blank?
         @errors << "Zipcode cannot be blank."
@@ -26,7 +26,7 @@ class WeatherController < ApplicationController
           res = Net::HTTP.get_response(uri)
           if res.is_a?(Net::HTTPSuccess)
             zip_json = JSON.parse(res.body)
-            lat,lon = zip_json["lat"], zip_json["lon"]
+            lat, lon = zip_json["lat"], zip_json["lon"]
             redirect_to forecast_url + "?lat=#{lat}&lon=#{lon}"
           elsif res.is_a?(Net::HTTPNotFound)
             logger.error("WeatherController.index - failed to fetch lat and lon using zipcode, zipcode not found")
@@ -44,11 +44,11 @@ class WeatherController < ApplicationController
 
   def forecast
     @errors = []
-    
+
     # get lat and lon from params
     lat = forecast_params[:lat]
     lon = forecast_params[:lon]
-    
+
     # basic validate zipcode (depiste the front-end already validating)
     if lat.blank? or lon.blank?
       redirect_to root_path
@@ -63,13 +63,13 @@ class WeatherController < ApplicationController
         # using lat and lon, get weather overview from owm
         uri = URI("https://api.openweathermap.org/data/2.5/weather?lat=#{lat}&lon=#{lon}&appid=#{owm_api_key}&units=imperial")
 
-        cache_key = [lat, lon] # caching with lat and lon instead of zipcode, but it's essentially the same ;-)
+        cache_key = [ lat, lon ] # caching with lat and lon instead of zipcode, but it's essentially the same ;-)
         @cache_miss = false
         weather_res = Rails.cache.fetch(cache_key, expires_in: 30.minutes) do
           @cache_miss = true
           Net::HTTP.get_response(uri)
         end
-        
+
         if weather_res.is_a?(Net::HTTPSuccess)
           @weather = JSON.parse(weather_res.body)
         elsif weather_res.is_a?(Net::HTTPNotFound)
@@ -96,9 +96,9 @@ class WeatherController < ApplicationController
 
   def openweathermap_api_key
     if not Rails.application.credentials.openweathermap or not Rails.application.credentials.openweathermap.api_key or Rails.application.credentials.openweathermap.api_key.blank?
-      return nil
+      nil
     else
-      return Rails.application.credentials.openweathermap.api_key
+      Rails.application.credentials.openweathermap.api_key
     end
   end
 end
